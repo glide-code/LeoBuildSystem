@@ -1,0 +1,6 @@
+3rdparty/
+bin/
+build/
+obj/
+BuildSystem.sublime-project
+BuildSystem.sublime-workspace
