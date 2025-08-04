@@ -1,6 +1,6 @@
 #include "BuildSystem.hpp"
 #include "Compilers.hpp"
-#include "ext/tinyxml2.h"
+#include "ext/tinyxml2/tinyxml2.h"
 #include "Utils.hpp"
 using namespace tinyxml2;
 
