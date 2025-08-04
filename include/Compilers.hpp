@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <sys/types.h>
 
 namespace Leo
 {
@@ -11,6 +12,10 @@ namespace Leo
     public:
         ToolchainBase() = default;
         ~ToolchainBase() = default;
+
+        void SetProjectInfo(
+            std::string projectRootDir,
+            std::string projectCacheDir);
 
         void SetSources(
             std::vector<std::string>& sources,
@@ -26,13 +31,21 @@ namespace Leo
             std::vector<std::string>& linkerLibraries,
             std::vector<std::string>& linkerIncludeDirectories);
 
-        virtual void SetupState();
+        // Set to true to recompile entire project
+        void SetCleanFlag(bool option);
+
+        virtual bool SetupState();
         virtual std::vector<std::string> Compile();
         virtual void Link(std::string outFileName, std::vector<std::string>& objectFiles);
+
+        virtual std::vector<std::string> ExamineSources();
+        virtual void MakeDependencyTree(std::string depsData, std::vector<std::string>& depsOut);
 
 
     protected:
         std::string mName = "Dummy Compiler";
+        std::string mProjectRootDir;
+        std::string mProjectCacheDir;
 
         std::vector<std::string> mSourceFiles;
         std::vector<std::string> mHeaderFiles;
@@ -43,6 +56,8 @@ namespace Leo
         std::vector<std::string> mLinkerFlags;
         std::vector<std::string> mLinkerLibraries;
         std::vector<std::string> mLinkerIncludeDirectories;
+
+        bool mCleanBuild;
     };
 
     class ToolchainMinGW : public ToolchainBase
@@ -51,9 +66,12 @@ namespace Leo
         ToolchainMinGW() = default;
         ~ToolchainMinGW() = default;
 
-        void SetupState() override;
+        bool SetupState() override;
         std::vector<std::string> Compile() override;
         void Link(std::string outFileName, std::vector<std::string>& objectFiles) override;
+
+        std::vector<std::string> ExamineSources() override;
+        void MakeDependencyTree(std::string depsData, std::vector<std::string>& depsOut) override;
 
     protected:
         std::string mName = "MinGW";
@@ -71,6 +89,10 @@ namespace Leo
             MinGW
         };
 
+        void SetProjectInfo(
+            std::string projectRootDir,
+            std::string projectCacheDir);
+
         void SetSources(
             std::vector<std::string>& sources,
             std::vector<std::string>& headers);
@@ -86,6 +108,7 @@ namespace Leo
             std::vector<std::string>& linkerIncludeDirectories);
 
         void SetActiveToolchain(Toolchain option);
+        void SetCleanFlag(bool option);
 
         std::vector<std::string> Compile();
         void Link(std::string outFileName, std::vector<std::string>& objectFiles);

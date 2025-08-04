@@ -1,6 +1,6 @@
 #include "BuildSystem.hpp"
 #include "Compilers.hpp"
-#include "ext/tinyxml2/tinyxml2.h"
+#include "ext/tinyxml2.h"
 #include "Utils.hpp"
 using namespace tinyxml2;
 
@@ -8,6 +8,18 @@ namespace Leo
 {
     bool BuildSystem::ReadProjectFile(std::string filepath)
     {
+        if(mVerbosityLevel == VerbosityLevel::Extended)
+            std::cout << "Loading project: " << Utils::GetAbsolutePath(filepath) << "\n";
+        mProjectRootDir = Utils::StripFilePath(Utils::GetAbsolutePath(filepath));
+        mProjectCacheDir = mProjectRootDir + "/LeoProjectCache";
+
+        if(mVerbosityLevel == VerbosityLevel::Extended)
+        {
+            std::cout << "Project root: " << mProjectRootDir << "\n";
+            std::cout << "Project cache: " << mProjectCacheDir << "\n";
+        }
+        
+
         if(!VerifyProjectStructure(filepath))
             return false;
 
@@ -148,30 +160,55 @@ namespace Leo
     }
 
     void BuildSystem::StartBuild()
+
     {
         DisplayBuildInfo();
-
         Compiler compiler;
         compiler.SetActiveToolchain(Compiler::Toolchain::MinGW);
+        compiler.SetCleanFlag(false);
+
+        // Setup project cache
+        if(!Utils::PathExists(mProjectCacheDir))
+        {
+            Utils::CreateDirectory(mProjectCacheDir);
+
+            // Create reference point
+            std::ofstream referenceFile(mProjectCacheDir + "/reference");
+            referenceFile << "\n";
+            referenceFile.close();
+
+            compiler.SetCleanFlag(true);
+        }
+
+
+        compiler.SetProjectInfo(mProjectRootDir, mProjectCacheDir);
         compiler.SetSources(mSourceFiles, mHeaderFiles);
         compiler.SetCompilerOptions(mCompilerFlags, mCompilerDefines, mCompilerIncludeDirectories);
         compiler.SetLinkerOptions(mLinkerFlags, mLinkerLibraries, mLinkerIncludeDirectories);
         std::vector<std::string> objects = compiler.Compile();
         compiler.Link(mProjectName, objects);
+        
+        // Update reference point
+        std::ofstream referenceFile(mProjectCacheDir + "/reference");
+        referenceFile << "\n";
+        referenceFile.close();
     }
 
     void BuildSystem::DisplayBuildInfo()
     {
-        std::cout << "------------[ Build Started ]------------\n";
+        std::cout << "Build Started...\n";
         std::cout << "Project name: " << mProjectName << "\n";
+
+        if(mVerbosityLevel != VerbosityLevel::Extended)
+            return;
 
         std::cout << "Sources:\n";
         for(std::string& source : mSourceFiles)
-            std::cout << "\t" << source << "\n";
+            std::cout << "    " << source << "\n";
 
         std::cout << "Headers:\n";
         for(std::string& header : mHeaderFiles)
-            std::cout << "\t" << header << "\n";
+            std::cout << "    " << header << "\n";
         
         std::cout << "Compiler flags: ";
         for(std::string& option : mCompilerFlags)
@@ -253,5 +290,10 @@ namespace Leo
         }
 
         return result;
+    }
+
+    void BuildSystem::SetVerbosity(VerbosityLevel level)
+    {
+        mVerbosityLevel = level;
     }
 }

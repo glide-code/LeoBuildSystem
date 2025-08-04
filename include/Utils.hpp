@@ -3,50 +3,63 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <chrono>
+
 #include <unistd.h>
 #include <sys/wait.h>
-#include <iostream>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 namespace Utils
 {
-    inline void StartProcessAndWait(std::string program, const std::vector<std::string>& args)
-    {
-        unsigned int size = args.size() + 2;
-        char* argv[size];
-
-        argv[0] = const_cast<char*>(program.c_str());
-        for(int i = 0; i < static_cast<int>(args.size()); i++)
-            argv[i+1] = const_cast<char*>(args[i].c_str());
-        argv[args.size() + 1] = nullptr;
-
-        pid_t pid;
-        int status;
-        pid = fork();
-
-        switch(pid)
-        {
-        case -1:
-            std::cout << "Failed to fork process\n";
-            break;
-
-        case 0:
-            execvp(program.c_str(), argv);
-            std::cout << "Failed to execute \"" << program << "\"\n";
-            exit(EXIT_FAILURE);
-            break;
-
-        default:
-            wait(&status);
-            break;
-        }
-    }
-
+    void StartProcessAndWait(std::string program, const std::vector<std::string>& args);
+    
     inline std::string StripFileName(std::string text)
     {
         std::string::size_type pos = text.find_last_of('/');
         if(pos == std::string::npos) return text;
         return text.substr(text.find_last_of('/') + 1);
     }
+
+    inline std::string StripFilePath(std::string text)
+    {
+        std::string::size_type pos = text.find_last_of('/');
+        if(pos == std::string::npos) return text;
+        return text.substr(0, text.find_last_of('/'));
+    }
+
+    inline std::string GetAbsolutePath(std::string text)
+    {
+        return std::filesystem::absolute(text).string();
+    }
+
+    inline bool PathExists(std::string path)
+    {
+        return std::filesystem::exists(path);
+    }
+
+    inline bool CreateDirectory(std::string path)
+    {
+        return std::filesystem::create_directory(path);
+    }
+
+    inline std::filesystem::file_time_type GetFileModifiedTime(std::string path)
+    {
+        // It is slower than platform specific methods
+        // We are trading speed with portability
+        return std::filesystem::last_write_time(path);
+    }
+
+    inline bool FileModified(std::string path, std::filesystem::file_time_type referencePoint)
+    {
+        std::filesystem::file_time_type fileTime = GetFileModifiedTime(path);
+        std::chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(fileTime - referencePoint);
+        return (duration.count() > 0);
+    }
+
 }
 
 #endif // UTILS_H_

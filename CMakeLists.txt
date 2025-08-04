@@ -6,7 +6,8 @@ add_executable(BuildSystem
     Main.cpp
     src/BuildSystem.cpp
     src/Compilers.cpp
-    ext/tinyxml2/tinyxml2.cpp
+    src/Utils.cpp
+    ext/tinyxml2.cpp
     )
 
 target_include_directories(BuildSystem

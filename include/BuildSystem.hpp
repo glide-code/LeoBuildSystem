@@ -12,12 +12,22 @@ namespace Leo
         BuildSystem() = default;
         ~BuildSystem() = default;
 
+        enum class VerbosityLevel
+        {
+            Min,
+            Extended
+        };
+
         bool ReadProjectFile(std::string filepath);
         void StartBuild();
         void DisplayBuildInfo();
 
+        void SetVerbosity(VerbosityLevel level);
+
     private:
         std::string mProjectName;
+        std::string mProjectRootDir;
+        std::string mProjectCacheDir;
 
         std::vector<std::string> mSourceFiles;
         std::vector<std::string> mHeaderFiles;
@@ -28,6 +38,8 @@ namespace Leo
         std::vector<std::string> mLinkerFlags;
         std::vector<std::string> mLinkerLibraries;
         std::vector<std::string> mLinkerIncludeDirectories;
+
+        VerbosityLevel mVerbosityLevel = VerbosityLevel::Min;
 
         bool VerifyProjectStructure(std::string filepath);
     };
