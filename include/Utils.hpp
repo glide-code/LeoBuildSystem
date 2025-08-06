@@ -12,8 +12,20 @@ namespace Utils
 {
     void StartProcessAndWait(std::string program, const std::vector<std::string>& args);
     
+    inline std::string NormalizePath(std::string text)
+    {
+        // Change backslash to forward slash
+        #ifdef _WIN32
+            for(int i = 0; i < static_cast<int>(text.length()); i++)
+                if(text[i] == '\\') text[i] = '/';
+        #endif
+
+        return text;
+    }
+
     inline std::string StripFileName(std::string text)
     {
+        text = NormalizePath(text);
         std::string::size_type pos = text.find_last_of('/');
         if(pos == std::string::npos) return text;
         return text.substr(text.find_last_of('/') + 1);
@@ -21,6 +33,7 @@ namespace Utils
 
     inline std::string StripFilePath(std::string text)
     {
+        text = NormalizePath(text);
         std::string::size_type pos = text.find_last_of('/');
         if(pos == std::string::npos) return text;
         return text.substr(0, text.find_last_of('/'));

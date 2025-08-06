@@ -24,14 +24,29 @@ namespace Utils
 
         char argv[32767]; // https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa
 
-        strcat_s(argv, sizeof(argv), program.c_str());
+        strcpy_s(argv, sizeof(argv), program.c_str());
         for(int i = 0; i < static_cast<int>(args.size()); i++)
         {
             strcat_s(argv, sizeof(argv), " ");
             strcat_s(argv, sizeof(argv), args[i].c_str());
         }
 
-        if(!CreateProcessA(program.c_str(), argv, NULL, NULL, FALSE, 0, NULL, NULL, &si &pi))
+        std::cout << argv << "\n\n";
+
+        // Get the full path of the program
+        if(!Utils::PathExists(program))
+        {
+            char programPath[MAX_PATH];
+            if (!SearchPath(NULL, program.c_str(), ".exe", MAX_PATH, programPath, NULL))
+            {
+                std::cout << "Error " << GetLastError() << ": Failed to find " << program << " in PATH\n";
+                return;
+            }
+
+            program = programPath;
+        }
+
+        if(!CreateProcessA(program.c_str(), argv, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
         {
             std::cout << "CreateProcess failed: " << GetLastError() << "\n";
             return;

@@ -96,7 +96,7 @@ namespace Leo
 
         for(std::string file : mSourceFiles)
         {
-            objectFiles.push_back("obj/" + Utils::StripFileName(file) + ".obj");
+            objectFiles.push_back("./obj/" + Utils::StripFileName(file) + ".obj");
             std::cout << "Compiling: " << file << " > " << objectFiles.back() << "\n";
 
             command.push_back(file);
@@ -162,7 +162,7 @@ namespace Leo
         std::vector<std::string> command;
         command.push_back("-M");
         command.push_back("-MT");
-        command.push_back("");
+        command.push_back("a");
         command.push_back("-MF");
         command.push_back(mProjectCacheDir + "/out.dep");
 
@@ -192,7 +192,7 @@ namespace Leo
             file.close();
 
             // Trim unnecessary parts from 'buf'
-            std::string leftTrim = ": " + source + " ";
+            std::string leftTrim = "a: " + source + " ";
             buf = buf.substr(leftTrim.length());
             
             std::vector<std::string> deps;
@@ -302,7 +302,7 @@ namespace Leo
         {
             for(std::string& file : mSourceFiles)
             {
-                objectFiles.push_back("obj/" + Utils::StripFileName(file) + ".obj");
+                objectFiles.push_back("./obj/" + Utils::StripFileName(file) + ".obj");
                 std::cout << "Compiling: " << file << " > " << objectFiles.back() << "\n";
 
                 command.push_back(file);
@@ -318,7 +318,7 @@ namespace Leo
         {
             for(std::string& file : changedFiles)
             {
-                objectFiles.push_back("obj/" + Utils::StripFileName(file) + ".obj");
+                objectFiles.push_back("./obj/" + Utils::StripFileName(file) + ".obj");
                 std::cout << "Compiling: " << file << " > " << objectFiles.back() << "\n";
 
                 command.push_back(file);
