@@ -8,11 +8,6 @@
 #include <filesystem>
 #include <chrono>
 
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
 namespace Utils
 {
     void StartProcessAndWait(std::string program, const std::vector<std::string>& args);

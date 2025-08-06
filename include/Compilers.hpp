@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <sys/types.h>
 
 namespace Leo
 {

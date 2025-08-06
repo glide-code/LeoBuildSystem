@@ -12,3 +12,6 @@ add_executable(BuildSystem
 
 target_include_directories(BuildSystem
     PUBLIC . include)
+
+target_link_libraries(BuildSystem
+    PUBLIC $<IF:$<PLATFORM_ID:Windows,CYGWIN>,user32 kernel32 shell32,>)
