@@ -5,7 +5,7 @@
         <Item>src/BuildSystem.cpp</Item>
         <Item>src/Compilers.cpp</Item>
         <Item>src/Utils.cpp</Item>
-        <Item>ext/tinyxml2.cpp</Item>
+        <Item>ext/tinyxml2/tinyxml2.cpp</Item>
     </Sources>
     <Headers>
         <Item>BuildSystem.hpp</Item>

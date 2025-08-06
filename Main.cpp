@@ -48,12 +48,19 @@ int main(int argc, char** argv)
         if(Utils::PathExists(arg))
         {
             fileToRead = arg;
+            continue;
         }
         else
         {
             std::cout << "Skipping unknown command: " << arg << "\n";
             continue;
         }
+    }
+
+    if(fileToRead.empty())
+    {
+        std::cout << "No project files to read\n";
+        return 0;
     }
 
     std::cout << "------------[ Leo Build System ]------------\n";

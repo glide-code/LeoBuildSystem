@@ -51,11 +51,11 @@ namespace Leo
 
     bool ToolchainBase::SetupState()
     {
-        if(!Utils::PathExists("obj"))
-            Utils::CreateDirectory("obj");
+        if(!Utils::PathExists("./obj"))
+            Utils::CreateDirectory("./obj");
         
-        if(!Utils::PathExists("bin"))
-            Utils::CreateDirectory("bin");
+        if(!Utils::PathExists("./bin"))
+            Utils::CreateDirectory("./bin");
 
         return true;
     }
@@ -146,11 +146,13 @@ namespace Leo
 
     bool ToolchainMinGW::SetupState()
     {
-        if(!Utils::PathExists("obj"))
-            Utils::CreateDirectory("obj");
+        if(!Utils::PathExists("./obj"))
+            Utils::CreateDirectory("./obj");
         
-        if(!Utils::PathExists("bin"))
-            Utils::CreateDirectory("bin");
+        if(!Utils::PathExists("./bin"))
+            Utils::CreateDirectory("./bin");
+
+        return true;
     }
 
     std::vector<std::string> ToolchainMinGW::ExamineSources()
