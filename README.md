@@ -16,7 +16,12 @@ cmake --build build
 
 # Running
 To run this build system, simply pass your project file to the build system executable.
-### Currently, it only works on GNU/Linux. Windows port is pending
+### Windows (buggy)
+```
+buildsystem.exe <project file>
+```
+
+### GNU/Linux
 ```
 ./buildsystem <project file>
 ```

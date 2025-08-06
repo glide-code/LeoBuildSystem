@@ -2,5 +2,6 @@
 bin/
 build/
 obj/
+LeoBuildSystem/
 BuildSystem.sublime-project
 BuildSystem.sublime-workspace
